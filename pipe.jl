@@ -1,8 +1,7 @@
 #Reflow piped things replacing the _ in the next section
 function rewrite(ff::Expr,target)
-    @assert(ff.head==:call)
     rep_indexs = find(ff.args.==:_)
-    if length(rep_indexs)>0
+    if (ff.head==:call && length(rep_indexs)>0) 
         #_ subsitution
         ff.args[rep_indexs]=target
         ff
@@ -10,6 +9,7 @@ function rewrite(ff::Expr,target)
         #Apply to a function that is being returned by ff
         rewrite_apply(ff,target)
     end
+        
 
 end
 
