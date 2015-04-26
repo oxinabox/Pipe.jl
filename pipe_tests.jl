@@ -22,6 +22,9 @@
 @assert macroexpand( :(@pipe a|>b(_,_) ) ) == :(b(a,a)) # marked double (Not certain if this is a good idea)
 @assert macroexpand( :(@pipe a|>bb[2](x,_))) == :((bb[2])(x,a)) #Should work with RHS that is a array reference
 
+#marked Unpacking
+@assert macroexpand( :(@pipe a|>b(_...) ) ) == :(b(a...)) # Unpacking
+@assert macroexpand( :(@pipe a|>bb[2](_...))) == :((bb[2])(a...)) #Should work with RHS of arry ref and do unpacking
 
 #Mixing modes
 @assert macroexpand( :(@pipe a|>b|>c(_) ) ) == :(c(b(a)))
