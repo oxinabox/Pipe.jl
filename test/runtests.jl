@@ -36,5 +36,4 @@ include("../src/Pipe_inner.jl") #Hack to avoid namespace mangling in macros
 @test macroexpand( :(@pipe a|>b(xb,_)|>c|>d(_,xd)|>e(xe) |>f(xf,_,yf) ) ) == :(f(xf,(e(xe))(d(c(b(xb,a)),xd)),yf)) #Very Complex
 
 
-println("--- DONE ---")
 
