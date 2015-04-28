@@ -1,6 +1,6 @@
 using Base.Test
+using Pipe
 
-include("../src/Pipe_inner.jl") #Hack to avoid namespace mangling in macros
 
 #No change to nonpipes functionality 
 @test macroexpand( :(@pipe a) ) == :a #doesn't change single inputs
