@@ -1,5 +1,9 @@
 #Pipe
 
+ - **Release:** [![Pipe](http://pkg.julialang.org/badges/Pipe_release.svg)](http://pkg.julialang.org/?pkg=Pipe&ver=release) 
+ - **Nightly:** [![Pipe](http://pkg.julialang.org/badges/Pipe_nightly.svg)](http://pkg.julialang.org/?pkg=Pipe&ver=nightly)
+
+ 
 ##Installation
 As per normal install by calling (On the julia REPL or IJulia):
 
