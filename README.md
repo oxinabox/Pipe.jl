@@ -76,5 +76,7 @@ If you are using `_` as a variable name etc, you will not be able to use that va
 I'm not 100% sold that _ is the best marker for this.
 
 ##See Also:
-[Lazy.jl](https://github.com/one-more-minute/Lazy.jl#macros)'s threading macros.
+
+ - [Lazy.jl](https://github.com/one-more-minute/Lazy.jl#macros)'s threading macros.
 They are similar, the stylistic difference this has, is the preserving of the |> symbol, which I find more readable
+ - [FunctionalData.jl](https://github.com/rened/FunctionalData.jl#pipeline-syntax-details)'s pipeline syntax. Even more similar, this uses the | for piping.
