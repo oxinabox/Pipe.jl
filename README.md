@@ -34,7 +34,11 @@ Futher  the _ can be unpacked, called, deindexed offetc.
 @pipe a|>b(_[3]) # == b(a[3])
 ```
 
-This last can be used for interacting with multiple returned values.
+This last can be used for interacting with multiple returned values. In general however, this is frowned upon.
+Generally a pipeline is good for expressing a logical flow data through Single Input Single Output functions. When you deindex multiple times, that is case of working with Multiple Input Multiple Output functions.
+In that case it is likely more clear to create named variables, and call the functions normally in sequence.
+There is also a performace cost for doing multiple deindexes (see below).
+
 
 For example:
 
@@ -44,6 +48,7 @@ function get_angle(rise,run)
 end
 
 @pipe (2,4) |> get_angle(_[1],_[2]) # == 0.4636476090008061
+get_angle(2,4) # == 0.4636476090008061 #Note the ordinary way is much clearer
 
 ```
 
@@ -53,7 +58,7 @@ Eg
 
 ```
 function ratio(value, lr, rr)
-    println("slitting on ration $lr:$rr")
+    println("slitting on ratio $lr:$rr")
     value*lr/(lr+rr), value*rr/(lr+rr)
 end
 
@@ -61,8 +66,8 @@ function percent(left, right)
     left/right*100
 end
 
-@pipe 10 |> ratio(_,4,1) |> percent(_[1],_[2]) # = 400.0, outputs slitting on ration 4:1 Twice
-@pipe 10 |> ratio(_,4,1) |> percent(_...) # = 400.0, outputs slitting on ration 4:1 Once
+@pipe 10 |> ratio(_,4,1) |> percent(_[1],_[2]) # = 400.0, outputs splitting on ratio 4:1 Twice
+@pipe 10 |> ratio(_,4,1) |> percent(_...) # = 400.0, outputs splitting on ratio 4:1 Once
 ```
 
 
