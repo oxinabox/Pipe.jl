@@ -1,5 +1,7 @@
 module Pipe
 #Reflow piped things replacing the _ in the next section
+using Compat
+
 export @pipe
 
 function rewrite(ff::Expr,target)
@@ -33,7 +35,7 @@ function rewrite(ff::Expr,target)
 end
         
 
-function rewrite_apply(ff::Union(Symbol,Expr),target)
+function rewrite_apply(ff::@compat(Union{Symbol,Expr}), target)
     #function application
     :($ff($target))
 end
