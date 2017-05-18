@@ -20,7 +20,7 @@ function rewrite(ff::Expr,target)
         rep.args = map(replace,rep.args)
         rep
     end
-       
+
     if (ff.head==:call)
         rep_args = map(replace,ff.args)
         if ff.args != rep_args
@@ -33,14 +33,14 @@ function rewrite(ff::Expr,target)
     #Apply to a function that is being returned by ff, (ff could be a function call or something more complex)
     rewrite_apply(ff,target)
 end
-        
+
 
 function rewrite_apply(ff::@compat(Union{Symbol,Expr}), target)
     #function application
     :($ff($target))
 end
 
-function rewrite(ff::Symbol,target) 
+function rewrite(ff::Symbol,target)
     rewrite_apply(ff,target)
 end
 
@@ -53,7 +53,7 @@ function funnel(ee::Expr)
     if (ee.args[1]==:|>)
         ff = ee.args[3]
         target = funnel(ee.args[2]) #Recurse
-        
+
         rewrite(ff,target)
     else
         #Not in a piping situtation
@@ -65,6 +65,12 @@ macro pipe(ee)
     esc(funnel(ee))
 end
 
-
+macro pipe(ee...)
+  target = ee[1]
+  for ff in ee[2:end]
+    target = rewrite(ff, target)
+  end
+  target
+end
 
 end
