@@ -1,6 +1,10 @@
 # Pipe
 
-[![Build Status](https://travis-matrix-badges.herokuapp.com/repos/oxinabox/Pipe.jl/branches/master)](https://travis-ci.org/oxinabox/Pipe.jl)
+- Julia 0.3: [![Build Status 0.3](https://travis-matrix-badges.herokuapp.com/repos/oxinabox/Pipe.jl/branches/master/1)](https://travis-ci.org/oxinabox/Pipe.jl)
+ - Julia 0.4: [![Build Status 0.4](https://travis-matrix-badges.herokuapp.com/repos/oxinabox/Pipe.jl/branches/master/2)](https://travis-ci.org/oxinabox/Pipe.jl)
+ - Julia 0.5: [![Build Status 0.5](https://travis-matrix-badges.herokuapp.com/repos/oxinabox/Pipe.jl/branches/master/3)](https://travis-ci.org/oxinabox/Pipe.jl)
+ - Julia 0.6: [![Build Status 0.6](https://travis-matrix-badges.herokuapp.com/repos/oxinabox/Pipe.jl/branches/master/4)](https://travis-ci.org/oxinabox/Pipe.jl)
+ - Julia Nightly: [![Build Status Nightly](https://travis-matrix-badges.herokuapp.com/repos/oxinabox/Pipe.jl/branches/master/5)](https://travis-ci.org/oxinabox/Pipe.jl)
  
 ## Installation
 As per normal install by calling (On the julia REPL or IJulia):
