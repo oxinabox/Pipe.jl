@@ -82,6 +82,4 @@ I'm not 100% sold that _ is the best marker for this.
 
 ## See Also:
 
- - [Lazy.jl](https://github.com/one-more-minute/Lazy.jl#macros)'s threading macros.
-They are similar, the stylistic difference this has, is the preserving of the |> symbol, which I find more readable
- - [FunctionalData.jl](https://github.com/rened/FunctionalData.jl#pipeline-syntax-details)'s pipeline syntax. Even more similar, this uses the | for piping.
+ - [List of similar/related works](https://github.com/JuliaLang/julia/issues/5571#issuecomment-205754539)
