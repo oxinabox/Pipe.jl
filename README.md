@@ -1,8 +1,6 @@
 # Pipe
 
- - **Release:** [![Pipe](http://pkg.julialang.org/badges/Pipe_release.svg)](http://pkg.julialang.org/?pkg=Pipe&ver=release) 
- - **Nightly:** [![Pipe](http://pkg.julialang.org/badges/Pipe_nightly.svg)](http://pkg.julialang.org/?pkg=Pipe&ver=nightly)
-
+[![Build Status](https://travis-matrix-badges.herokuapp.com/repos/oxinabox/Pipe.jl/branches/master)](https://travis-ci.org/oxinabox/Pipe.jl)
  
 ## Installation
 As per normal install by calling (On the julia REPL or IJulia):
