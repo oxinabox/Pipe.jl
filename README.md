@@ -4,7 +4,7 @@
  - **Nightly:** [![Pipe](http://pkg.julialang.org/badges/Pipe_nightly.svg)](http://pkg.julialang.org/?pkg=Pipe&ver=nightly)
 
  
-##Installation
+## Installation
 As per normal install by calling (On the julia REPL or IJulia):
 
 ```
@@ -12,7 +12,7 @@ Pkg.add("Pipe")
 ```
 
 
-##Usage
+## Usage
 
 
 To use this place `@pipe` at the start of the line for which you want "advanced piping functionality" to work.
@@ -75,12 +75,12 @@ end
 
 ---------------------
 
-##Issues
+## Issues
 
 If you are using `_` as a variable name etc, you will not be able to use that variable inside this  (except as most LHS, but that will get confusing). If you have a convincing reason why you should be using _ as a variable name then do tell me.
 I'm not 100% sold that _ is the best marker for this.
 
-##See Also:
+## See Also:
 
  - [Lazy.jl](https://github.com/one-more-minute/Lazy.jl#macros)'s threading macros.
 They are similar, the stylistic difference this has, is the preserving of the |> symbol, which I find more readable
