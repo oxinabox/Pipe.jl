@@ -1,6 +1,5 @@
 module Pipe
 #Reflow piped things replacing the _ in the next section
-using Compat
 
 export @pipe
 
@@ -35,12 +34,12 @@ function rewrite(ff::Expr,target)
 end
         
 
-function rewrite_apply(ff::@compat(Union{Symbol,Expr}), target)
+function rewrite_apply(ff, target)
     #function application
     :($ff($target))
 end
 
-function rewrite(ff::Symbol,target) 
+function rewrite(ff::Symbol, target) 
     rewrite_apply(ff,target)
 end
 
@@ -64,7 +63,5 @@ end
 macro pipe(ee)
     esc(funnel(ee))
 end
-
-
 
 end
