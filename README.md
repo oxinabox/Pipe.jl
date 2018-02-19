@@ -19,7 +19,7 @@ Pkg.add("Pipe")
 
 To use this place `@pipe` at the start of the line for which you want "advanced piping functionality" to work.
 
-This works the same as Julia 1.3 Piping,
+This works the same as Julia Piping,
 except if you place a underscore in the right hand of the expressing, it will be replaced with the lefthand side.
 
 So:
