@@ -3,12 +3,14 @@ module Pipe
 
 export @pipe
 
+const PLACEHOLDER = :_
+
 function rewrite(ff::Expr,target)
     function replace(arg::Any)
         arg #Normally do nothing
     end
     function replace(arg::Symbol)
-        if arg==:_
+        if arg==PLACEHOLDER
             target
         else
             arg
@@ -19,8 +21,8 @@ function rewrite(ff::Expr,target)
         rep.args = map(replace,rep.args)
         rep
     end
-       
-    if (ff.head==:call)
+
+    if (ff.head in [:call, :ref])
         rep_args = map(replace,ff.args)
         if ff.args != rep_args
             #_ subsitution
@@ -28,19 +30,23 @@ function rewrite(ff::Expr,target)
             return ff
         end
     end
-    #No subsitution was done (either cos not a call, or cost no _ found)
+    #No subsitution was done (either cos not a call, or cos no _ found)
     #Apply to a function that is being returned by ff, (ff could be a function call or something more complex)
     rewrite_apply(ff,target)
 end
-        
+
 
 function rewrite_apply(ff, target)
     #function application
     :($ff($target))
 end
 
-function rewrite(ff::Symbol, target) 
-    rewrite_apply(ff,target)
+function rewrite(ff::Symbol, target)
+    if ff==PLACEHOLDER
+        target
+    else
+        rewrite_apply(ff,target)
+    end
 end
 
 function funnel(ee::Any) #Could be a Symbol could be a literal
@@ -50,10 +56,8 @@ end
 
 function funnel(ee::Expr)
     if (ee.args[1]==:|>)
-        ff = ee.args[3]
         target = funnel(ee.args[2]) #Recurse
-        
-        rewrite(ff,target)
+        rewrite(ee.args[3],target)
     else
         #Not in a piping situtation
         ee #make no change

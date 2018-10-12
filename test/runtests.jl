@@ -3,7 +3,7 @@ using Test
 _macroexpand(x) = macroexpand(Main, x)
 
 
-#No change to nonpipes functionality 
+#No change to nonpipes functionality
 @test _macroexpand( :(@pipe a) ) == :a #doesn't change single inputs
 @test _macroexpand( :(@pipe b(a)) ) == :(b(a)) #doesn't change inputs that a function applications
 
@@ -18,6 +18,7 @@ _macroexpand(x) = macroexpand(Main, x)
 @test _macroexpand(:(@pipe 1|>a)) ==:(a(1)) #Works with literals (int)
 @test _macroexpand(:(@pipe "foo"|>a)) == :(a("foo")) #Works with literal (string)
 @test _macroexpand( :(@pipe a|>bb[2])) == :((bb[2])(a)) #Should work with RHS that is a array reference
+
 
 
 #Marked locations
