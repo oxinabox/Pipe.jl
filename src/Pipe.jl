@@ -22,23 +22,21 @@ function rewrite(ff::Expr,target)
         rep
     end
 
-    if (ff.head in [:call, :ref])
-        rep_args = map(replace,ff.args)
-        if ff.args != rep_args
-            #_ subsitution
-            ff.args=rep_args
-            return ff
-        end
+    rep_args = map(replace,ff.args)
+    if ff.args != rep_args
+        #_ subsitution
+        ff.args=rep_args
+        return ff
     end
-    #No subsitution was done (either cos not a call, or cos no _ found)
-    #Apply to a function that is being returned by ff, (ff could be a function call or something more complex)
+    #No subsitution was done (no _ found)
+    #Apply to a function that is being returned by ff,
+    #(ff could be a function call or something more complex)
     rewrite_apply(ff,target)
 end
 
 
 function rewrite_apply(ff, target)
-    #function application
-    :($ff($target))
+    :($ff($target)) #function application
 end
 
 function rewrite(ff::Symbol, target)
@@ -50,8 +48,7 @@ function rewrite(ff::Symbol, target)
 end
 
 function funnel(ee::Any) #Could be a Symbol could be a literal
-    #first (left most) input
-    ee
+    ee #first (left most) input
 end
 
 function funnel(ee::Expr)

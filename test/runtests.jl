@@ -28,6 +28,14 @@ _macroexpand(x) = macroexpand(Main, x)
 @test _macroexpand( :(@pipe a|>b(_,_) ) ) == :(b(a,a)) # marked double (Not certain if this is a good idea)
 @test _macroexpand( :(@pipe a|>bb[2](x,_))) == :((bb[2])(x,a)) #Should work with RHS that is a array reference
 
+#Macros and blocks
+macro testmacro(arg, n)
+    esc(:($arg + $n))
+end
+@test macroexpand( :(@pipe a |> @testmacro _ 3 ) ) == :(a + 3) # Can pipe into macros
+@test macroexpand( :(@pipe a |> begin b = _; c + b + _ end )) == :(
+                                begin b = a; c + b + a end)
+
 #marked Unpacking
 @test _macroexpand( :(@pipe a|>b(_...) ) ) == :(b(a...)) # Unpacking
 @test _macroexpand( :(@pipe a|>bb[2](_...))) == :((bb[2])(a...)) #Should work with RHS of arry ref and do unpacking
