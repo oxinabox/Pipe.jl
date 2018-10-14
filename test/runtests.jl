@@ -1,8 +1,10 @@
-using Base.Test
+using Test
 using Pipe
 
+import Base: macroexpand
+macroexpand(q) = macroexpand(Main, q)
 
-#No change to nonpipes functionality 
+#No change to nonpipes functionality
 @test macroexpand( :(@pipe a) ) == :a #doesn't change single inputs
 @test macroexpand( :(@pipe b(a)) ) == :(b(a)) #doesn't change inputs that a function applications
 
@@ -34,6 +36,3 @@ using Pipe
 @test macroexpand( :(@pipe a|>b|>c(_) ) ) == :(c(b(a)))
 @test macroexpand( :(@pipe a|>b(x,_)|>c|>d(_,y) ) ) == :(d(c(b(x,a)),y))
 @test macroexpand( :(@pipe a|>b(xb,_)|>c|>d(_,xd)|>e(xe) |>f(xf,_,yf) ) ) == :(f(xf,(e(xe))(d(c(b(xb,a)),xd)),yf)) #Very Complex
-
-
-
