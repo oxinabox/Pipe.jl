@@ -1,12 +1,7 @@
 using Pipe
 
-if VERSION >= v"0.7"
-    using Test
-    _macroexpand(x) = macroexpand(Main, x)
-else
-    using Base.Test
-    _macroexpand(x) = macroexpand(x)
-end
+using Test
+_macroexpand(x) = macroexpand(Main, x)
 
 #No change to nonpipes functionality 
 @test _macroexpand( :(@pipe a) ) == :a #doesn't change single inputs
