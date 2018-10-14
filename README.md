@@ -1,9 +1,9 @@
 # Pipe
 
+
  - Julia 0.7: [![Build Status 0.6](https://travis-matrix-badges.herokuapp.com/repos/oxinabox/Pipe.jl/branches/master/1)](https://travis-ci.org/oxinabox/Pipe.jl)
  - Julia 1.0: [![Build Status 0.6](https://travis-matrix-badges.herokuapp.com/repos/oxinabox/Pipe.jl/branches/master/2)](https://travis-ci.org/oxinabox/Pipe.jl)
-- Julia Nightly: [![Build Status Nightly](https://travis-matrix-badges.herokuapp.com/repos/oxinabox/Pipe.jl/branches/master/7)](https://travis-ci.org/oxinabox/Pipe.jl)
- 
+ - Julia Nightly: [![Build Status Nightly](https://travis-matrix-badges.herokuapp.com/repos/oxinabox/Pipe.jl/branches/master/7)](https://travis-ci.org/oxinabox/Pipe.jl)
 
 ## Usage
 

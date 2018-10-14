@@ -1,7 +1,7 @@
 using Pipe
-
 using Test
 _macroexpand(x) = macroexpand(Main, x)
+
 
 #No change to nonpipes functionality 
 @test _macroexpand( :(@pipe a) ) == :a #doesn't change single inputs
@@ -35,6 +35,3 @@ _macroexpand(x) = macroexpand(Main, x)
 @test _macroexpand( :(@pipe a|>b|>c(_) ) ) == :(c(b(a)))
 @test _macroexpand( :(@pipe a|>b(x,_)|>c|>d(_,y) ) ) == :(d(c(b(x,a)),y))
 @test _macroexpand( :(@pipe a|>b(xb,_)|>c|>d(_,xd)|>e(xe) |>f(xf,_,yf) ) ) == :(f(xf,(e(xe))(d(c(b(xb,a)),xd)),yf)) #Very Complex
-
-
-
