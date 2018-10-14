@@ -1,6 +1,5 @@
 using Pipe
 using Test
-_macroexpand(x) = macroexpand(Main, x)
 
 _macroexpand(q) = macroexpand(Main, q)
 
