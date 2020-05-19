@@ -5,7 +5,7 @@ export @pipe
 
 const PLACEHOLDER = :_
 
-function rewrite(ff::Expr, target, elementwise=false)
+function rewrite(ff::Expr, target, broadcast=false)
     function replace(arg::Any)
         arg #Normally do nothing
     end
@@ -22,7 +22,7 @@ function rewrite(ff::Expr, target, elementwise=false)
         rep
     end
 
-    if elementwise
+    if broadcast
         rep_arg1 = Symbol(:., ff.args[1])
         rep_args = [rep_arg1; replace.(ff.args[2:end])]
     else
@@ -39,19 +39,19 @@ function rewrite(ff::Expr, target, elementwise=false)
     rewrite_apply(ff,target)
 end
 
-function rewrite_apply(ff, target, elementwise=false)
-    if elementwise
+function rewrite_apply(ff, target, broadcast=false)
+    if broadcast
         :($ff.($target)) #function application
     else
         :($ff($target)) #function application
     end
 end
 
-function rewrite(ff::Symbol, target, elementwise=false)
+function rewrite(ff::Symbol, target, broadcast=false)
     if ff==PLACEHOLDER
         target
     else
-        rewrite_apply(ff,target,elementwise)
+        rewrite_apply(ff,target,broadcast)
     end
 end
 
