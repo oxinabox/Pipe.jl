@@ -47,3 +47,10 @@ end
 @test _macroexpand( :(@pipe a|>b|>c(_) ) ) == :(c(b(a)))
 @test _macroexpand( :(@pipe a|>b(x,_)|>c|>d(_,y) ) ) == :(d(c(b(x,a)),y))
 @test _macroexpand( :(@pipe a|>b(xb,_)|>c|>d(_,xd)|>e(xe) |>f(xf,_,yf)|>_[i] ) ) == :(f(xf,(e(xe))(d(c(b(xb,a)),xd)),yf)[i]) #Very Complex
+
+# broadcasting
+fn(x) = x^2
+@test _macroexpand( :(@pipe fn |> _.(1:2) ) ) == :(fn.(1:2))
+@test _macroexpand( :(@pipe 1:10 .|> _*2 ) ) == :((1:10) .* 2)
+@test _macroexpand( :(@pipe 1:10 .|> fn ) ) == :(fn.(1:10))
+@test _macroexpand( :(@pipe a .|> fn .|> _*2 ) ) == :(fn.(a) .* 2)
