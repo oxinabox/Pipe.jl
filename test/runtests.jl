@@ -4,6 +4,9 @@ using Test
 _macroexpand(q) = macroexpand(Main, q)
 
 rml! = Base.remove_linenums!
+# performs linenum removal and temp variable replacing to avoid different names of temp variables in different julia versions
+stringify_expr(e::Expr) = replace(string(rml!(e)), r"##\d{3}"=>"##000")
+pipe_equals(e1::Expr, e2::Expr) = stringify_expr(_macroexpand(e1)) == stringify_expr(e2)
 
 #No change to nonpipes functionality
 @test _macroexpand( :(@pipe a) ) == :a #doesn't change single inputs
@@ -51,17 +54,17 @@ end
 @test _macroexpand( :(@pipe a|>b(xb,_)|>c|>d(_,xd)|>e(xe) |>f(xf,_,yf)|>_[i] ) ) == :(f(xf,(e(xe))(d(c(b(xb,a)),xd)),yf)[i]) #Very Complex
 
 # broadcasting
-@test rml!( _macroexpand(:(@pipe 1:10 .|> _*2 ))) == rml!(:(1:10 .|> var"##253"->var"##253" * 2))
-@test rml!( _macroexpand(:(@pipe 1:10 .|> fn ))) == rml!(:(1:10 .|> var"##254"->fn(var"##254")))
-@test rml!( _macroexpand(:(@pipe a .|> fn .|> _*2 ))) == rml!(:(a .|> (var"##255"->fn(var"##255")) .|> (var"##256"->var"##256"*2)))
-@test rml!( _macroexpand(:(@pipe a .|> fn |> _*2 ))) == rml!(:((a .|> var"##257"->fn(var"##257")) * 2))
-@test rml!( _macroexpand(:(@pipe [1,2,2] |> atan.([10,20,30], _) ))) == rml!(:(atan.([10,20,30], [1,2,2])))
-@test rml!( _macroexpand(:(@pipe [1,2,2] .|> atan.([10,20,30], _) ))) == rml!(:([1,2,2] .|> var"##258"->atan.([10,20,30], var"##258")))
-@test rml!( _macroexpand(:(@pipe fn |> _.(1:2) ))) == :(fn.(1:2))
-@test rml!( _macroexpand(:(@pipe fn .|> _.(1:2) ))) == rml!(:(fn .|> var"##259"->var"##259".(1:2)))
+@test pipe_equals(:(@pipe 1:10 .|> _*2 ), :(1:10 .|> var"##253"->var"##253" * 2))
+@test pipe_equals(:(@pipe 1:10 .|> fn ), :(1:10 .|> var"##254"->fn(var"##254")))
+@test pipe_equals(:(@pipe a .|> fn .|> _*2 ), :(a .|> (var"##255"->fn(var"##255")) .|> (var"##256"->var"##256"*2)))
+@test pipe_equals(:(@pipe a .|> fn |> _*2 ), :((a .|> var"##257"->fn(var"##257")) * 2))
+@test pipe_equals(:(@pipe [1,2,2] |> atan.([10,20,30], _) ), :(atan.([10,20,30], [1,2,2])))
+@test pipe_equals(:(@pipe [1,2,2] .|> atan.([10,20,30], _) ), :([1,2,2] .|> var"##258"->atan.([10,20,30], var"##258")))
+@test pipe_equals(:(@pipe fn |> _.(1:2) ), :(fn.(1:2)))
+@test pipe_equals(:(@pipe fn .|> _.(1:2) ), :(fn .|> var"##259"->var"##259".(1:2)))
 
-@test rml!( _macroexpand(:(@pipe [true,false] .|> ! ))) == rml!(:([true, false] .|> var"##260"->!var"##260"))
-@test rml!( _macroexpand(:(@pipe [1, 2] |> .+(_, x) ))) == :([1, 2] .+ x)
-@test rml!( _macroexpand(:(@pipe [1, 2] |>  _ .+ x ))) == :([1, 2] .+ x)
-@test rml!( _macroexpand(:(@pipe [1, 2] .|> .+(_, x) ))) == rml!(:([1, 2] .|> var"##261"->var"##261".+x))
-@test rml!( _macroexpand(:(@pipe [1, 2] .|>  _ .+ x ))) == rml!(:([1, 2] .|> var"##262"->var"##262".+x))
+@test pipe_equals(:(@pipe [true,false] .|> ! ), :([true, false] .|> var"##260"->!var"##260"))
+@test pipe_equals(:(@pipe [1, 2] |> .+(_, x) ), :([1, 2] .+ x))
+@test pipe_equals(:(@pipe [1, 2] |>  _ .+ x ), :([1, 2] .+ x))
+@test pipe_equals(:(@pipe [1, 2] .|> .+(_, x) ), :([1, 2] .|> var"##261"->var"##261".+x))
+@test pipe_equals(:(@pipe [1, 2] .|>  _ .+ x ), :([1, 2] .|> var"##262"->var"##262".+x))
