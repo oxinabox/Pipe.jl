@@ -52,6 +52,23 @@ end
 fn(x) = x^2
 @test _macroexpand( :(@pipe fn |> _.(1:2) ) ) == :(fn.(1:2))
 # @test _macroexpand( :(@pipe fn .|> _.(1:2) ) ) == :(fn.(1:2))   # what should we do with this?
-@test _macroexpand( :(@pipe 1:10 .|> _*2 ) ) == :((1:10) .* 2)
-@test _macroexpand( :(@pipe 1:10 .|> fn ) ) == :(fn.(1:10))
-@test _macroexpand( :(@pipe a .|> fn .|> _*2 ) ) == :(fn.(a) .* 2)
+@test _macroexpand( :(@pipe 1:10 .|> _*2 ) ) == :(1:10 .|> (var"##253"->begin var"##253" * 2 end))
+@test _macroexpand( :(@pipe 1:10 .|> fn ) ) == :(1:10 .|> (var"##254"->begin var"##254" * 2 end))
+@test _macroexpand( :(@pipe a .|> fn .|> _*2 ) ) == :(a .|> var"##255"->begin fn(var"##255") end .|> var"##256"->begin var"##256"*2 end)
+@test _macroexpand( :(@pipe a .|> fn |> _*2 ) ) == :((a .|> var"##257"->begin fn(var"##257") end) * 2)
+@test _macroexpand( :(@pipe [1,2,2] |> atan.([10,20,30], _) ) ) == :(atan.([10,20,30], [1,2,2]))
+@test _macroexpand( :(@pipe [1,2,2] .|> atan.([10,20,30], _) ) ) == :([1,2,2] .|> var"##257"->atan.([10,20,30], var"##257"))
+
+# @test _macroexpand( :(@pipe [true,false] .|> ! ) ) == :((!).([true, false]))
+# @test _macroexpand( :(@pipe [1, 2] |> .+(_, x) ) ) == :([1, 2] .+ x)
+# @test _macroexpand( :(@pipe [1, 2] |>  _ .+ x ) ) == :([1, 2] .+ x)
+# # last two are probably not right
+# @test _macroexpand( :(@pipe [1, 2] .|> .+(_, x) ) ) == :(var"..+"([1, 2], x))
+# @test _macroexpand( :(@pipe [1, 2] .|>  _ .+ x ) ) == :(var"..+"([1, 2], x))
+
+#todo: maybe use broadcase function to deal with
+# atan.([10,20,30], [1,2,2])
+# broadcast(atan, [10,20,30], [1,2,2])
+# broadcast(atan, [10,20,30], broadcast(atan, [1,2,2], 1))
+
+# todo: add tests for following

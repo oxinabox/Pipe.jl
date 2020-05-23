@@ -5,43 +5,52 @@ export @pipe
 
 const PLACEHOLDER = :_
 
-function rewrite(ff::Expr, target, broadcast=false)
-    function replace(arg::Any)
-        arg #Normally do nothing
+function replace(arg::Any, target)
+    arg #Normally do nothing
+end
+
+function replace(arg::Symbol, target)
+    if arg==PLACEHOLDER
+        target
+    else
+        arg
     end
-    function replace(arg::Symbol)
-        if arg==PLACEHOLDER
-            target
-        else
-            arg
+end
+
+function replace(arg::Expr, target)
+    rep = copy(arg)
+    rep.args = map(x->replace(x, target), rep.args)
+    rep
+end
+
+function rewrite(ff::Expr, target, broadcast=false)
+    if broadcast
+        temp_var = gensym()
+        rep_args = map(x->replace(x, temp_var), ff.args)
+        if ff.args != rep_args
+            #_ subsitution
+            ff.args = rep_args
+            return :($temp_var->$ff)
+        end
+    else
+        rep_args = map(x->replace(x, target), ff.args)
+        if ff.args != rep_args
+            #_ subsitution
+            ff.args = rep_args
+            return ff
         end
     end
-    function replace(arg::Expr)
-        rep = copy(arg)
-        rep.args = replace.(rep.args)
-        rep
-    end
 
-    if broadcast
-        rep_arg1 = Symbol(:., ff.args[1])
-        rep_args = [rep_arg1; replace.(ff.args[2:end])]
-    else
-        rep_args = replace.(ff.args)
-    end
-    if ff.args != rep_args
-        #_ subsitution
-        ff.args=rep_args
-        return ff
-    end
     #No subsitution was done (no _ found)
     #Apply to a function that is being returned by ff,
     #(ff could be a function call or something more complex)
-    rewrite_apply(ff,target)
+    rewrite_apply(ff,target,broadcast)
 end
 
 function rewrite_apply(ff, target, broadcast=false)
     if broadcast
-        :($ff.($target)) #function application
+        temp_var = gensym()
+        :($temp_var->$ff($temp_var))
     else
         :($ff($target)) #function application
     end
@@ -65,7 +74,9 @@ function funnel(ee::Expr)
         rewrite(ee.args[3],target)
     elseif (ee.args[1]==:.|>)
         target = funnel(ee.args[2]) #Recurse
-        rewrite(ee.args[3],target,true)
+        rewritten = rewrite(ee.args[3],target,true)
+        ee.args[3] = rewritten
+        ee
     else
         #Not in a piping situtation
         ee #make no change
