@@ -3,6 +3,8 @@ using Test
 
 _macroexpand(q) = macroexpand(Main, q)
 
+expressions_equal(e1::Expr, e2::Expr) = Base.remove_linenums!(e1) == Base.remove_linenums!(e2)
+
 #No change to nonpipes functionality
 @test _macroexpand( :(@pipe a) ) == :a #doesn't change single inputs
 @test _macroexpand( :(@pipe b(a)) ) == :(b(a)) #doesn't change inputs that a function applications
@@ -52,12 +54,12 @@ end
 fn(x) = x^2
 @test _macroexpand( :(@pipe fn |> _.(1:2) ) ) == :(fn.(1:2))
 # @test _macroexpand( :(@pipe fn .|> _.(1:2) ) ) == :(fn.(1:2))   # what should we do with this?
-@test _macroexpand( :(@pipe 1:10 .|> _*2 ) ) == :(1:10 .|> (var"##253"->begin var"##253" * 2 end))
-@test _macroexpand( :(@pipe 1:10 .|> fn ) ) == :(1:10 .|> (var"##254"->begin var"##254" * 2 end))
-@test _macroexpand( :(@pipe a .|> fn .|> _*2 ) ) == :(a .|> var"##255"->begin fn(var"##255") end .|> var"##256"->begin var"##256"*2 end)
-@test _macroexpand( :(@pipe a .|> fn |> _*2 ) ) == :((a .|> var"##257"->begin fn(var"##257") end) * 2)
-@test _macroexpand( :(@pipe [1,2,2] |> atan.([10,20,30], _) ) ) == :(atan.([10,20,30], [1,2,2]))
-@test _macroexpand( :(@pipe [1,2,2] .|> atan.([10,20,30], _) ) ) == :([1,2,2] .|> var"##257"->atan.([10,20,30], var"##257"))
+@test expressions_equal(_macroexpand( :(@pipe 1:10 .|> _*2 ) ), :(1:10 .|> (var"##253"->var"##253" * 2)))
+@test expressions_equal(_macroexpand( :(@pipe 1:10 .|> fn ) ), :(1:10 .|> (var"##254"->fn(var"##254"))))
+@test expressions_equal(_macroexpand( :(@pipe a .|> fn .|> _*2 ) ), :(a .|> (var"##255"->fn(var"##255")) .|> (var"##256"->var"##256"*2)))
+@test expressions_equal(_macroexpand( :(@pipe a .|> fn |> _*2 ) ), :((a .|> var"##257"->fn(var"##257")) * 2))
+@test expressions_equal(_macroexpand( :(@pipe [1,2,2] |> atan.([10,20,30], _) ) ), :(atan.([10,20,30], [1,2,2])))
+@test expressions_equal(_macroexpand( :(@pipe [1,2,2] .|> atan.([10,20,30], _) ) ), :([1,2,2] .|> var"##257"->atan.([10,20,30], var"##257")))
 
 # @test _macroexpand( :(@pipe [true,false] .|> ! ) ) == :((!).([true, false]))
 # @test _macroexpand( :(@pipe [1, 2] |> .+(_, x) ) ) == :([1, 2] .+ x)
