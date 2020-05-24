@@ -54,17 +54,18 @@ end
 @test _macroexpand( :(@pipe a|>b(xb,_)|>c|>d(_,xd)|>e(xe) |>f(xf,_,yf)|>_[i] ) ) == :(f(xf,(e(xe))(d(c(b(xb,a)),xd)),yf)[i]) #Very Complex
 
 # broadcasting
-@test pipe_equals(:(@pipe 1:10 .|> _*2 ), :(1:10 .|> var"##253"->var"##253" * 2))
-@test pipe_equals(:(@pipe 1:10 .|> fn ), :(1:10 .|> var"##254"->fn(var"##254")))
-@test pipe_equals(:(@pipe a .|> fn .|> _*2 ), :(a .|> (var"##255"->fn(var"##255")) .|> (var"##256"->var"##256"*2)))
-@test pipe_equals(:(@pipe a .|> fn |> _*2 ), :((a .|> var"##257"->fn(var"##257")) * 2))
+vars = 1:10 .|> y->gensym() # Julia < 1.3 does uses Symbol for variables, but Julia >= 1.3 uses var, so I use output of gensym
+@test pipe_equals(:(@pipe 1:10 .|> _*2 ), :(1:10 .|> $(vars[1])->$(vars[1]) * 2))
+@test pipe_equals(:(@pipe 1:10 .|> fn ), :(1:10 .|> $(vars[2])->fn($(vars[2]))))
+@test pipe_equals(:(@pipe a .|> fn .|> _*2 ), :(a .|> ($(vars[3])->fn($(vars[3]))) .|> ($(vars[4])->$(vars[4])*2)))
+@test pipe_equals(:(@pipe a .|> fn |> _*2 ), :((a .|> $(vars[5])->fn($(vars[5]))) * 2))
 @test pipe_equals(:(@pipe [1,2,2] |> atan.([10,20,30], _) ), :(atan.([10,20,30], [1,2,2])))
-@test pipe_equals(:(@pipe [1,2,2] .|> atan.([10,20,30], _) ), :([1,2,2] .|> var"##258"->atan.([10,20,30], var"##258")))
+@test pipe_equals(:(@pipe [1,2,2] .|> atan.([10,20,30], _) ), :([1,2,2] .|> $(vars[6])->atan.([10,20,30], $(vars[6]))))
 @test pipe_equals(:(@pipe fn |> _.(1:2) ), :(fn.(1:2)))
-@test pipe_equals(:(@pipe fn .|> _.(1:2) ), :(fn .|> var"##259"->var"##259".(1:2)))
+@test pipe_equals(:(@pipe fn .|> _.(1:2) ), :(fn .|> $(vars[7])->$(vars[7]).(1:2)))
 
-@test pipe_equals(:(@pipe [true,false] .|> ! ), :([true, false] .|> var"##260"->!var"##260"))
+@test pipe_equals(:(@pipe [true,false] .|> ! ), :([true, false] .|> $(vars[8])->!$(vars[8])))
 @test pipe_equals(:(@pipe [1, 2] |> .+(_, x) ), :([1, 2] .+ x))
 @test pipe_equals(:(@pipe [1, 2] |>  _ .+ x ), :([1, 2] .+ x))
-@test pipe_equals(:(@pipe [1, 2] .|> .+(_, x) ), :([1, 2] .|> var"##261"->var"##261".+x))
-@test pipe_equals(:(@pipe [1, 2] .|>  _ .+ x ), :([1, 2] .|> var"##262"->var"##262".+x))
+@test pipe_equals(:(@pipe [1, 2] .|> .+(_, x) ), :([1, 2] .|> $(vars[9])->$(vars[9]).+x))
+@test pipe_equals(:(@pipe [1, 2] .|>  _ .+ x ), :([1, 2] .|> $(vars[10])->$(vars[10]).+x))
