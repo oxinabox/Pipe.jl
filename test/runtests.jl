@@ -54,7 +54,7 @@ end
 @test _macroexpand( :(@pipe a|>b(xb,_)|>c|>d(_,xd)|>e(xe) |>f(xf,_,yf)|>_[i] ) ) == :(f(xf,(e(xe))(d(c(b(xb,a)),xd)),yf)[i]) #Very Complex
 
 # broadcasting
-vars = 1:10 .|> y->gensym() # Julia < 1.3 does uses Symbol for variables, but Julia >= 1.3 uses var, so I use output of gensym
+vars = 1:10 .|> y->gensym() # Julia < 1.3 changes how Symbols are stringified so we compute the representation here
 @test pipe_equals(:(@pipe 1:10 .|> _*2 ), :(1:10 .|> $(vars[1])->$(vars[1]) * 2))
 @test pipe_equals(:(@pipe 1:10 .|> fn ), :(1:10 .|> $(vars[2])->fn($(vars[2]))))
 @test pipe_equals(:(@pipe a .|> fn .|> _*2 ), :(a .|> ($(vars[3])->fn($(vars[3]))) .|> ($(vars[4])->$(vars[4])*2)))
