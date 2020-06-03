@@ -34,7 +34,7 @@ function rewrite(ff::Expr, target)
     #No subsitution was done (no _ found)
     #Apply to a function that is being returned by ff,
     #(ff could be a function call or something more complex)
-    rewrite_apply(ff,target,broadcast)
+    rewrite_apply(ff,target)
 end
 
 function rewrite_broadcasted(ff::Expr, target)
@@ -49,7 +49,7 @@ function rewrite_broadcasted(ff::Expr, target)
     #No subsitution was done (no _ found)
     #Apply to a function that is being returned by ff,
     #(ff could be a function call or something more complex)
-    rewrite_apply(ff,target,broadcast)
+    rewrite_apply_broadcasted(ff,target)
 end
 
 function rewrite_apply(ff, target)
