@@ -11,7 +11,8 @@
 Place `@pipe` at the start of the line for which you want "advanced piping functionality" to work.
 
 This works the same as Julia piping,
-except if you place a underscore in the right hand of the expressing, it will be replaced with the lefthand side.
+except if you place a underscore in the right-hand expression, 
+it will be replaced with the result of the left-hand expression.
 
 So:
 ```julia
@@ -26,7 +27,7 @@ Futher the `_` can be unpacked, called, deindexed, etc.
 ```
 
 This last can be used for interacting with multiple returned values. In general, however, this is frowned upon.
-Generally a pipeline is good for expressing a logical flow data through Single Input Single Output functions. 
+Generally, a pipeline is good for expressing a logical flow data through Single Input Single Output functions. 
 When you deindex multiple times, that is case of working with Multiple Input Multiple Output functions.
 
 In that case it is likely more clear to create named variables, and call the functions normally in sequence.
