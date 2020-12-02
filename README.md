@@ -7,6 +7,11 @@
  - Julia Nightly: [![Build Status Nightly](https://travis-matrix-badges.herokuapp.com/repos/oxinabox/Pipe.jl/branches/master/5)](https://travis-ci.org/oxinabox/Pipe.jl)
 
 ## Usage
+Load the package via
+```julia
+using Pipe: @pipe
+```
+(Just doing `using Pipe` will give an error about a name conflict with the `Base.Pipe` type.)
 
 Place `@pipe` at the start of the line for which you want "advanced piping functionality" to work.
 
