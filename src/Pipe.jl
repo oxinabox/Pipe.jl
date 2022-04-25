@@ -34,7 +34,11 @@ function rewrite(ff::Expr, target)
     _found = find_underscores(ff)
     if !_found
         agrs = ff.args
-        ff.args = [agrs[1], :_, agrs[2:end]...]
+        if typeof(ff.args[2]) == LineNumberNode
+            ff.args = [agrs[1:2]..., :_, agrs[3:end]...]
+        else
+            ff.args = [agrs[1], :_, agrs[2:end]...]
+        end
     end
     
     rep_args = map(x->replace(x, target), ff.args)
