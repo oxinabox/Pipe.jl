@@ -23,7 +23,20 @@ function replace(arg::Expr, target)
     rep
 end
 
+find_underscores(x::Any) = false
+find_underscores(x::Symbol) = x == :_
+function find_underscores(x::Expr)
+    map(find_underscores, x.args) |> any
+end
+
 function rewrite(ff::Expr, target)
+    # check underscores; if not found, insert to the first position
+    _found = find_underscores(ff)
+    if !_found
+        agrs = ff.args
+        ff.args = [agrs[1], :_, agrs[2:end]...]
+    end
+    
     rep_args = map(x->replace(x, target), ff.args)
     if ff.args != rep_args
         #_ subsitution

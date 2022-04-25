@@ -17,13 +17,13 @@ pipe_equals(e1::Expr, e2::Expr) = stringify_expr(_macroexpand(e1)) == stringify_
 @test _macroexpand( :(@pipe a|>b|>c) ) == :(c(b(a)))  #Keeps chaining 3
 @test _macroexpand( :(@pipe a|>b|>c|>d) ) == :(d(c(b(a)))) #Keeps chaining 4
 
-@test _macroexpand( :(@pipe a|>b(x)) ) == :((b(x))(a))  #applying to function calls returning functions
+# @test _macroexpand( :(@pipe a|>b(x)) ) == :((b(x))(a))  #applying to function calls returning functions
 @test _macroexpand( :(@pipe a(x)|>b ) ) == :(b(a(x)))   #feeding functioncall results on wards
 
 @test _macroexpand(:(@pipe 1|>a)) ==:(a(1)) #Works with literals (int)
 @test _macroexpand(:(@pipe "foo"|>a)) == :(a("foo")) #Works with literal (string)
-@test _macroexpand( :(@pipe a|>bb[2])) == :((bb[2])(a)) #Should work with RHS that is a array reference
 
+# @test _macroexpand( :(@pipe a|>bb[2])) == :((bb[2])(a)) #Should work with RHS that is a array reference
 
 
 #Marked locations
@@ -51,7 +51,7 @@ end
 #Mixing modes
 @test _macroexpand( :(@pipe a|>b|>c(_) ) ) == :(c(b(a)))
 @test _macroexpand( :(@pipe a|>b(x,_)|>c|>d(_,y) ) ) == :(d(c(b(x,a)),y))
-@test _macroexpand( :(@pipe a|>b(xb,_)|>c|>d(_,xd)|>e(xe) |>f(xf,_,yf)|>_[i] ) ) == :(f(xf,(e(xe))(d(c(b(xb,a)),xd)),yf)[i]) #Very Complex
+# @test _macroexpand( :(@pipe a|>b(xb,_)|>c|>d(_,xd)|>e(xe) |>f(xf,_,yf)|>_[i] ) ) == :(f(xf,(e(xe))(d(c(b(xb,a)),xd)),yf)[i]) #Very Complex
 
 # broadcasting
 vars = 1:10 .|> y->gensym() # Julia < 1.3 changes how Symbols are stringified so we compute the representation here
@@ -69,3 +69,10 @@ vars = 1:10 .|> y->gensym() # Julia < 1.3 changes how Symbols are stringified so
 @test pipe_equals(:(@pipe [1, 2] |>  _ .+ x ), :([1, 2] .+ x))
 @test pipe_equals(:(@pipe [1, 2] .|> .+(_, x) ), :([1, 2] .|> $(vars[9])->$(vars[9]).+x))
 @test pipe_equals(:(@pipe [1, 2] .|>  _ .+ x ), :([1, 2] .|> $(vars[10])->$(vars[10]).+x))
+
+
+@testset "`_` 1st location" begin
+    @test _macroexpand(:(@pipe a |> b(x))) == :((b(a, x)))  #applying to function calls returning functions
+    @test _macroexpand(:(@pipe a |> bb[2])) == :(bb[a, 2]) #Should work with RHS that is a array reference
+    @test _macroexpand(:(@pipe a |> b(xb, _) |> c |> d(_, xd) |> e(xe) |> f(xf, _, yf) |> _[i])) == :((f(xf, e(d(c(b(xb, a)), xd), xe), yf))[i])
+end
