@@ -88,6 +88,7 @@ function funnel(ee::Expr)
     elseif (ee.args[1]==:.|>)
         target = funnel(ee.args[2]) #Recurse
         rewritten = rewrite_broadcasted(ee.args[3],target)
+        ee.args[2] = target
         ee.args[3] = rewritten
         ee
     else
